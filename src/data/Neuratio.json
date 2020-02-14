@@ -1,0 +1,33 @@
+{
+    "group_name" : "Neuratio",
+    "participants" : [
+        {
+            "participant_name": "sufyan",
+            "mail": "sufyan.kerboua@epitech.eu",
+            "not_assigned_participant": [
+                "louis"
+            ]
+        },
+        {
+            "participant_name": "louis",
+            "mail": "louis@mail.eu",
+            "not_assigned_participant": [
+                "frantz"
+            ]
+        },
+        {
+            "participant_name": "JB",
+            "mail": "JB@mail.eu",
+            "not_assigned_participant": [
+                "sufyan"
+            ]
+        },
+        {
+            "participant_name": "frantz",
+            "mail": "frantz@epitech.eu",
+            "not_assigned_participant": [
+                "JB"
+            ]
+        }
+    ]
+}

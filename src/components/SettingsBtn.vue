@@ -4,9 +4,6 @@
       <img src="../assets/icons/settings.png" alt="Settings">
     </router-link>
     <router-view/>
-
-
-    
   </div>
 </template>
 

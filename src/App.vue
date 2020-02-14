@@ -4,9 +4,26 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div> -->
+    <LogoHomeBtn/>
     <router-view/>
   </div>
 </template>
+
+<script>
+// @ is an alias to /src
+import LogoHomeBtn from '@/components/LogoHomeBtn.vue'
+
+
+export default {
+  name: 'App',
+  components: {
+    LogoHomeBtn
+  },
+  props: {
+    name: String
+  }
+}
+</script>
 
 <style>
 
@@ -22,9 +39,10 @@ body {
   text-align: center;
   height: 100%;
   color: #2c3e50;
-  /* background-image: url("assets/wallpaper_secret_santa.jpg");
+  /* background-image: url("assets/wallpaper_secret_santa.jpg"); */
+  background-image: url("assets/background_secret_santa.jpg");
   background-repeat: no-repeat;
-  background-size: 100% 100%; */
+  background-size: 100% 100%;
 
   background-color: #252525!important;
 }

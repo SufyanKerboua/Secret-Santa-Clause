@@ -1,0 +1,54 @@
+{
+    "group_name" : "Berlin",
+    "participants" : [
+        {
+            "participant_name": "sufyan",
+            "mail": "ksufyan@live.fr",
+            "not_assigned_participant": [
+                "emmaS"
+            ]
+        },
+        {
+            "participant_name": "Merlin",
+            "mail": "@mail.fr",
+            "not_assigned_participant": [
+                "sufyan"
+            ]
+        },
+        {
+            "participant_name": "alice",
+            "mail": "@mail.fr",
+            "not_assigned_participant": [
+                "emmaKo"
+            ]
+        },
+        {
+            "participant_name": "emmaKo",
+            "mail": "@mail.fr",
+            "not_assigned_participant": [
+                "arthurus"
+            ]
+        },
+        {
+            "participant_name": "emmaS",
+            "mail": "@mail.fr",
+            "not_assigned_participant": [
+                "maelle"
+            ]
+        },
+        {
+            "participant_name": "Arthurus",
+            "mail": "@mail.fr",
+            "not_assigned_participant": [
+                "alice"
+            ]
+        },
+        {
+            "participant_name": "maelle",
+            "mail": "@mail.fr",
+            "not_assigned_participant": [
+                "merlin"
+            ]
+        }
+    ]
+}

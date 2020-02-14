@@ -1,10 +1,13 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import {
   createProtocol,
-  /* installVueDevtools */
+  installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
+import fs from 'fs'
+import path from 'path'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 
@@ -15,13 +18,33 @@ let win
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
 
+function getJsonData() {
+  let JsonGroup = []
+  let jsonGroupArray = fs.readdirSync(__dirname + "/../src/data/")
+
+  for (let index = 0; index < jsonGroupArray.length; index++) {
+    let elem = path.join(__dirname + "/../src/data/", jsonGroupArray[index]);
+    let ret = JSON.parse(fs.readFileSync(elem, 'utf-8'))
+    JsonGroup.push(ret)
+  }
+  return JsonGroup;
+}
+
+let JsonGroups = getJsonData()
+
+ipcMain.on('get-json-group', (event) => {
+  // console.log(event)
+  event.sender.send('get-json-group-reply', JSON.stringify(JsonGroups));
+})
+
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({ width: 1000, height: 700, resizable: true, webPreferences: {
+  win = new BrowserWindow({ width: 1000, height: 700, resizable: false, show: false, webPreferences: {
     nodeIntegration: true
   } })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
+
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
     // Load Debug mode
@@ -34,6 +57,10 @@ function createWindow () {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+
+  win.once('ready-to-show', () => {
+    win.show()
+  })
 
   win.on('closed', () => {
     win = null
@@ -68,11 +95,11 @@ app.on('ready', async () => {
     // Electron will not launch with Devtools extensions installed on Windows 10 with dark mode
     // If you are not using Windows 10 dark mode, you may uncomment these lines
     // In addition, if the linked issue is closed, you can upgrade electron and uncomment these lines
-    // try {
-    //   await installVueDevtools()
-    // } catch (e) {
-    //   console.error('Vue Devtools failed to install:', e.toString())
-    // }
+    try {
+      await installVueDevtools()
+    } catch (e) {
+      console.error('Vue Devtools failed to install:', e.toString())
+    }
 
   }
   createWindow()

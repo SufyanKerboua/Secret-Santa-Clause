@@ -1,23 +1,18 @@
 <template>
-  <div class="settings">
-    <h1>Settings</h1>
+  <div class="group_creator">
+    <h1>Group creator</h1>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-const {ipcRenderer} = require('electron')
 
 export default {
-  name: 'Settings',
+  name: 'GroupCreator',
   components: {
-  },
-  created: function () {
-    ipcRenderer.send('generate-data', "Settings vie");
   }
 }
 </script>
-
 
 <style scoped>
 
@@ -29,4 +24,3 @@ h1 {
 }
 
 </style>
-
