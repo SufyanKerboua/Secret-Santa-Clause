@@ -40,16 +40,18 @@ export default {
   created: function () {
     ipcRenderer.send('get-json-group');
     ipcRenderer.on('get-json-group-reply', (event, arg) => {
-      console.log("arg : ", arg);
       this.jsonGroups = JSON.parse(arg)
       console.log("Json groups : ", this.jsonGroups)
     })
-    this.items = ['cars2', 'Neuratio', 'Dublin', 'Groupe name very very long']
   }
 }
 </script>
 
 <style scoped>
+
+.home {
+  color: white;
+}
 
 h1 {
   margin: 0;

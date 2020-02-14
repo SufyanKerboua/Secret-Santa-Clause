@@ -18,9 +18,16 @@ let win
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
 
+// 
+// Communication Child Process
+// 
+
+const dataJSONGroupFolderName = __dirname + "/../src/data/";
+let JsonGroups = getJsonData()
+
 function getJsonData() {
   let JsonGroup = []
-  let jsonGroupArray = fs.readdirSync(__dirname + "/../src/data/")
+  let jsonGroupArray = fs.readdirSync(dataJSONGroupFolderName)
 
   for (let index = 0; index < jsonGroupArray.length; index++) {
     let elem = path.join(__dirname + "/../src/data/", jsonGroupArray[index]);
@@ -30,16 +37,28 @@ function getJsonData() {
   return JsonGroup;
 }
 
-let JsonGroups = getJsonData()
-
 ipcMain.on('get-json-group', (event) => {
-  // console.log(event)
   event.sender.send('get-json-group-reply', JSON.stringify(JsonGroups));
 })
 
+ipcMain.on('create-json-group', (event, arg) => {
+  let obj = JSON.parse(arg);
+  console.log("Obj created : ", obj);
+  let pathJSONFile = dataJSONGroupFolderName + obj.group_name + ".json";
+  console.log("Path to store group : ", pathJSONFile)
+  fs.writeFileSync(pathJSONFile, arg);
+  JsonGroups = getJsonData();
+})
+
+
+// 
+// END Communication Child Process
+// 
+
+
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({ width: 1000, height: 700, resizable: false, show: false, webPreferences: {
+  win = new BrowserWindow({ width: 1000, height: 700, minHeight: 500, minWidth: 900, resizable: true, "use-content-size": true, show: false, webPreferences: {
     nodeIntegration: true
   } })
 
