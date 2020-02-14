@@ -1,6 +1,6 @@
 <template>
   <div class="mail_sender">
-    <h1>INTO MAIL SENDER {{ name }}</h1>
+    <h1>{{ groupObj.group_name }}</h1>
   </div>
 </template>
 
@@ -12,12 +12,16 @@ export default {
   components: {
   },
   props: {
-    name: String
+    groupObj: Object
   }
 }
 </script>
 
 <style scoped>
+
+.mail_sender {
+  color: white;
+}
 
 h1 {
   margin: 0;

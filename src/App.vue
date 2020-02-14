@@ -30,8 +30,8 @@ export default {
 body {
   margin: 0;
   padding: 0;
-  width: 1000px;
-  height: 678px;
+  width: 100vw;
+  height: 100vh;
 }
 
 #app {
@@ -39,12 +39,10 @@ body {
   text-align: center;
   height: 100%;
   color: #2c3e50;
-  /* background-image: url("assets/wallpaper_secret_santa.jpg"); */
   background-image: url("assets/background_secret_santa.jpg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
-
-  background-color: #252525!important;
+  overflow-y: auto;
 }
 
 #nav a {

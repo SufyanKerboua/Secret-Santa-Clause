@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="{ name: 'MailSender', params: { props: this.json_obj }}">
+  <router-link :to="{ name: 'MailSender', params: { groupObj: this.json_obj }}">
     <div class="group_btn">
       <span>
         {{ group_title }}
@@ -14,6 +14,8 @@ export default {
   props: {
     group_title: String,
     json_obj: Object
+  },
+  created: function () {
   }
 }
 </script>
@@ -38,5 +40,8 @@ export default {
   text-align: center;
   margin: auto;
   padding: auto;
+  color: white;
 }
+
+a {  text-decoration: none;}
 </style>

@@ -1,16 +1,19 @@
 <template>
-  <router-link :to="{ name: 'GroupCreator'}">
-    <div class="group_creator_btn">
-      <span>
-          +
-      </span>
-    </div>
-  </router-link>
+  <div class="group_creator_btn">
+    <router-link :to="{ name: 'GroupCreator'}">
+      <mdb-icon class="text-success btn_plus" icon="plus-circle" size="5x"/>
+    </router-link>
+  </div>
 </template>
 
 <script>
+import {mdbIcon} from "mdbvue";
+
 export default {
   name: 'GroupCreatorBtn',
+  components: {
+    mdbIcon
+    },
   props: {
   }
 }
@@ -30,14 +33,10 @@ export default {
   border-radius: 30px;
 }
 
-.group_creator_btn span {
+.group_creator_btn .btn_plus {
   text-align: center;
-  margin: auto;
-  padding: auto;
+  margin: 30px;
 }
 
-.group_creator_btn span {
-  /* font: bold; */
-  font-size: 80px;
-}
+a {  text-decoration: none;}
 </style>
