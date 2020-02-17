@@ -1,0 +1,15 @@
+{
+    "client_id": "799927294977-iehqvnefl2j5ijsond7mk7vtlctbs2gf.apps.googleusercontent.com",
+    "project_id": "secret-santa-clause-268313",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "4i9KVyuvIktp3Q8ESWoD4AR9",
+    "redirect_uris": [
+        "https://developers.google.com/oauthplayground",
+        "http://127.0.0.1:42813/callback",
+        "http://127.0.0.1:42813",
+        "http://127.0.0.1"
+    ],
+    "javascript_origins": ["http://127.0.0.1%3A42813%2Fcallback"]
+}

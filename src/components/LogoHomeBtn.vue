@@ -1,7 +1,7 @@
 <template>
   <router-link :to="{ name: 'Home'}">
     <div class="logo_home_btn">
-      <img src="../assets/logo_scc.png" alt="Home">
+      <img id="logoBtn" src="../assets/logo_scc.png" alt="Home">
     </div>
   </router-link>
 </template>

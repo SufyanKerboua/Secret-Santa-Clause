@@ -1,15 +1,16 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain } from 'electron'
-import {
-  createProtocol,
-  installVueDevtools
-} from 'vue-cli-plugin-electron-builder/lib'
-import fs from 'fs'
-import path from 'path'
+import { app, protocol, BrowserWindow } from 'electron'
+import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
+
+let IPCManager = require('./backend/IPCManager.js');
+// let SettingsManager = require('./backend/SettingsManager.js');
+
+let IPCM = new IPCManager();
+// Listen All IPC
+IPCM.ListenerAll();
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
-
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -17,44 +18,6 @@ let win
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
-
-// 
-// Communication Child Process
-// 
-
-const dataJSONGroupFolderName = __dirname + "/../src/data/";
-let JsonGroups = getJsonData()
-
-function getJsonData() {
-  let JsonGroup = []
-  let jsonGroupArray = fs.readdirSync(dataJSONGroupFolderName)
-
-  for (let index = 0; index < jsonGroupArray.length; index++) {
-    let elem = path.join(__dirname + "/../src/data/", jsonGroupArray[index]);
-    let ret = JSON.parse(fs.readFileSync(elem, 'utf-8'))
-    JsonGroup.push(ret)
-  }
-  return JsonGroup;
-}
-
-ipcMain.on('get-json-group', (event) => {
-  event.sender.send('get-json-group-reply', JSON.stringify(JsonGroups));
-})
-
-ipcMain.on('create-json-group', (event, arg) => {
-  let obj = JSON.parse(arg);
-  console.log("Obj created : ", obj);
-  let pathJSONFile = dataJSONGroupFolderName + obj.group_name + ".json";
-  console.log("Path to store group : ", pathJSONFile)
-  fs.writeFileSync(pathJSONFile, arg);
-  JsonGroups = getJsonData();
-})
-
-
-// 
-// END Communication Child Process
-// 
-
 
 function createWindow () {
   // Create the browser window.

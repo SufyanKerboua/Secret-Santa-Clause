@@ -1,15 +1,31 @@
 <template>
   <div class="mail_sender">
     <h1>{{ groupObj.group_name }}</h1>
+    <mdbRow>
+      <mdbCol col=6>
+        <ShowParticipantsCard :groupObj="this.groupObj"/>
+      </mdbCol>
+      <mdbCol col=6>
+        <ShowMailPreviewCard :groupObj="this.groupObj"/>
+      </mdbCol>
+    </mdbRow>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import ShowParticipantsCard from '@/components/ShowParticipantsCard.vue'
+import ShowMailPreviewCard from '@/components/ShowMailPreviewCard.vue'
+
+import { mdbRow, mdbCol } from "mdbvue";
 
 export default {
   name: 'MailSender',
   components: {
+    ShowParticipantsCard,
+    ShowMailPreviewCard,
+    mdbRow,
+    mdbCol
   },
   props: {
     groupObj: Object

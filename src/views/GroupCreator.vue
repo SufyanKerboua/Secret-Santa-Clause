@@ -1,19 +1,19 @@
 <template>
   <div class="group_creator">
     <h1> <b> Group creator</b></h1>
-    <FormsPage/>
+    <FormGroupCard/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import FormsPage from '@/components/FormsPage.vue'
+import FormGroupCard from '@/components/FormGroupCard.vue'
 
 
 export default {
   name: 'GroupCreator',
   components: {
-    FormsPage
+    FormGroupCard
   }
 }
 </script>

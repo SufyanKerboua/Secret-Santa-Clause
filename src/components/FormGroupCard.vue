@@ -1,5 +1,5 @@
 <template>
-    <div class="forms_page">
+    <div class="form_group_card">
         <mdb-card>
             <mdb-card-header class="pt-4 amy-crisp-gradient">
                 <mdb-card-title><strong>Reservation</strong></mdb-card-title>
@@ -32,7 +32,7 @@
                         </mdb-col>
 
                         <mdb-col col="1" class="btn_add_remove">
-                            <mdb-icon class="text-danger btn_minus" icon="minus-circle" size="lg" @click.native="removeParticipant(k)" v-show="k || ( !k && participants.length > 1)" />
+                            <mdb-icon class="text-muted btn_minus" far icon="trash-alt" size="lg" @click.native="removeParticipant(k)" v-show="k || ( !k && participants.length > 1)" />
                             <mdb-icon class="text-success btn_plus" icon="plus-circle" size="lg" @click.native="addParticipant()" v-show="k == participants.length -1" />
                         </mdb-col>
                     </mdb-row>
@@ -62,7 +62,7 @@
   const {ipcRenderer} = require('electron')
 
   export default {
-    name: "FormsPage",
+    name: "FormGroupCard",
     components: {
       mdbRow,
       mdbCol,
@@ -125,7 +125,7 @@
 
 <style scoped>
 
-.forms_page {
+.form_group_card {
     text-align: initial;
     margin: 50px;
 }

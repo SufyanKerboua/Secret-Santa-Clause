@@ -1,15 +1,20 @@
 <template>
   <div class="settings_btn">
-    <router-link to="/Settings">
-      <img src="../assets/icons/settings.png" alt="Settings">
-    </router-link>
+      <img src="../assets/icons/settings.png" alt="Settings" @click="openPopup">
     <router-view/>
   </div>
 </template>
 
 <script>
+const {ipcRenderer} = require('electron')
+
 export default {
-  name: 'SettingsBtn'
+  name: 'SettingsBtn',
+  methods: {
+    openPopup() {
+      ipcRenderer.send('open-settings-pop-up');
+    }
+  }
 }
 </script>
 
