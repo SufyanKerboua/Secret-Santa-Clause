@@ -4,7 +4,6 @@ import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 
 let IPCManager = require('./backend/IPCManager.js');
-// let SettingsManager = require('./backend/SettingsManager.js');
 
 let IPCM = new IPCManager();
 // Listen All IPC

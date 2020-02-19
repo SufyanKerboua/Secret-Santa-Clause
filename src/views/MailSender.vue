@@ -1,14 +1,26 @@
 <template>
   <div class="mail_sender">
     <h1>{{ groupObj.group_name }}</h1>
-    <mdbRow>
-      <mdbCol col=6>
-        <ShowParticipantsCard :groupObj="this.groupObj"/>
-      </mdbCol>
-      <mdbCol col=6>
-        <ShowMailPreviewCard :groupObj="this.groupObj"/>
-      </mdbCol>
-    </mdbRow>
+    <mdb-container fluid>
+
+      <mdbRow>
+          <!-- <mdbCol col=2></mdbCol> -->
+          <mdbCol col=6>
+            <ShowParticipantsCard :groupObj="this.groupObj"/>
+          </mdbCol>
+          <mdbCol col=6>
+            <ShowMailPreviewCard :groupObj="this.groupObj"/>
+          </mdbCol>
+      </mdbRow>
+      <!-- <mdbRow>
+          <mdbCol col=3></mdbCol>
+          <mdbCol col=6>
+          </mdbCol>
+          <mdbCol col=3></mdbCol>
+      </mdbRow> -->
+    </mdb-container>
+
+
   </div>
 </template>
 
@@ -17,7 +29,7 @@
 import ShowParticipantsCard from '@/components/ShowParticipantsCard.vue'
 import ShowMailPreviewCard from '@/components/ShowMailPreviewCard.vue'
 
-import { mdbRow, mdbCol } from "mdbvue";
+import { mdbRow, mdbCol, mdbContainer } from "mdbvue";
 
 export default {
   name: 'MailSender',
@@ -25,7 +37,8 @@ export default {
     ShowParticipantsCard,
     ShowMailPreviewCard,
     mdbRow,
-    mdbCol
+    mdbCol,
+    mdbContainer
   },
   props: {
     groupObj: Object

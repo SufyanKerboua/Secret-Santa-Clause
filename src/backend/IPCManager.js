@@ -53,18 +53,13 @@ class IPCManager {
             this.getJsonData();
         })
 
-        electron.ipcMain.on('send-mails-2', async (event, param) => {
-            // todo get data from param
-            let configMail = {
-              from: param,
-            }
+        electron.ipcMain.on('send-mails', async (event, arg) => {
+
             if (this.myMailManager.mailAvailable()) {
-                console.log("Here mothr fucker");
                 await this.myMailManager.connectGmailAccount();
-                this.myMailManager.sendMail(configMail);
+                this.myMailManager.sendMail(JSON.parse(arg));
             } else {
                 event.sender.send('send-mails-error');
-                console.log("Here yaaa");
             }
         })
           

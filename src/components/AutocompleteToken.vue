@@ -84,14 +84,12 @@ import { mdbBadge } from "mdbvue";
         this.notAssignedParticipants.push(this.matches[this.current][this.filterBy]);
         this.current = 0;
       },
-
       //When up pressed while suggestions are open
       up() {
         if (this.current > 0)
             this.current--;
         this.scrollToItem();
       },
-
       //When up pressed while suggestions are open
       down() {
         if (this.current < this.matches.length - 1)

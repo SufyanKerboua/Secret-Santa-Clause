@@ -6,7 +6,6 @@
             </mdb-card-header>
 
             <mdb-card-body class="body_group_creation">
-
                 <form class="mx-3 grey-text md-form">
 
                     <mdb-row>
@@ -39,6 +38,7 @@
 
                 </form>
             </mdb-card-body>
+
             <mdb-card-footer class="white d-flex justify-content-end">
                 <mdb-btn gradient="amy-crisp" class="black-text" icon="paper-plane" @click.native="generateGroupJSON()" rounded>Create Group</mdb-btn>
             </mdb-card-footer>
@@ -113,6 +113,8 @@
                 tmpObj.not_assigned_participant = [ element.participant_name ]
                 groupObjJson.participants.push(tmpObj);
             });
+
+            console.log("GroupObjJson : ", groupObjJson);
 
             ipcRenderer.send('create-json-group', JSON.stringify(groupObjJson));
             // TODO redirection mailSender

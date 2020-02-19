@@ -9,9 +9,31 @@
             </mdb-card-header>
 
             <mdb-card-body class="body_group_creation">
-              <div class="mail_content" v-html="body"></div>
-              <mdb-btn color="primary" @click="sendEmail" rounded>Primary rounded button</mdb-btn>
+              <div class="mail_content">
+                <mdb-row>
+                  <mdb-col>
+                    <mdb-input label="Date" name="date" v-model="date" fas icon="calendar-day" placeholder="Date of the event" type="text"/>
+                  </mdb-col>
+                </mdb-row>
+
+                <mdb-row>
+                  <mdb-col>
+                    <mdb-input label="Time" name="time" v-model="time" fas icon="business-time" placeholder="Time of the event" type="text"/>
+                  </mdb-col>
+                </mdb-row>
+
+                <mdb-row>
+                  <mdb-col>
+                    <mdb-input label="Places" name="place" v-model="places" icon="map-marked-alt" placeholder="Places of the event" type="text"/>
+                  </mdb-col>
+                </mdb-row>
+
+              </div>
             </mdb-card-body>
+
+            <mdb-card-footer class="white d-flex justify-content-end">
+                <mdb-btn gradient="amy-crisp" icon="paper-plane" @click="sendEmail" rounded>Send Mails</mdb-btn>
+            </mdb-card-footer>
         </mdb-card>
     </div>
 </template>
@@ -19,37 +41,40 @@
 <script>
   const {ipcRenderer} = require('electron')
   import {
-    // mdbRow,
-    // mdbCol,
-    // mdbInput,
+    mdbRow,
+    mdbCol,
+    mdbInput,
     mdbBtn,
     mdbCard,
     mdbCardBody,
     mdbCardHeader,
     mdbCardTitle,
-    // mdbCardFooter,
+    mdbCardFooter,
     mdbIcon
   } from "mdbvue";
 
   export default {
     name: "ShowMailPreviewCard",
     components: {
-    //   mdbRow,
-    //   mdbCol,
-    //   mdbInput,
+      mdbRow,
+      mdbCol,
+      mdbInput,
       mdbBtn,
       mdbCard,
       mdbCardBody,
       mdbCardHeader,
       mdbCardTitle,
-    //   mdbCardFooter,
+      mdbCardFooter,
       mdbIcon
     },
     data() {
       return {
           group_name: "",
           participants: [],
-          body: ''
+          body: '',
+          date: '',
+          time: '',
+          places: ''
       };
     },
     props: {
@@ -67,12 +92,18 @@
     },
     methods: {
       sendEmail() {
-        // let tmpObj = {}
-        // tmpObj.from = "SecretSantaClause@mail.com"
-        // tmpObj.to = "sufyan.kerboua@epitech.eu"
-        let mail = 'Secret Santa Clause <sufyan.kerboua2@mail.dcu.ie>';
-        console.log("Mail sender : ", mail);
-        ipcRenderer.send('send-mails-2', mail);
+        let tmpObj = {
+          mailContentBasic: {
+            group_name: this.groupObj.group_name,
+            date: this.date,
+            time: this.time,
+            places: this.places
+          },
+          groupObj: this.groupObj
+        }
+        // let mail = 'Secret Santa Clause <sufyan.kerboua2@mail.dcu.ie>';
+        console.log("Mail sender : ", tmpObj);
+        ipcRenderer.send('send-mails', JSON.stringify(tmpObj));
         ipcRenderer.on('send-mails-error', (event) => {
           console.log(event);
           alert("No mail saved in Settings, please update your mail on the Settings Page.");
@@ -93,20 +124,10 @@
 
 .body_group_creation {
     overflow-y: auto;
-    height: 450px;
-    max-height: 450px;
-}
-
-.btn_add_remove {
-    margin: auto;
-}
-
-.btn_minus {
-    margin: 2px;
-}
-
-.btn_plus {
-    margin: 2px;
+    /* height: 350px; */
+    max-height: 400px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 .mail_content {

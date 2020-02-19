@@ -25,8 +25,10 @@
 
                 </form>
             </mdb-card-body>
+
             <mdb-card-footer class="white d-flex justify-content-end">
-                <mdb-btn gradient="amy-crisp" class="black-text" icon="check" rounded>Create Group</mdb-btn>
+                <mdb-btn gradient="amy-crisp" class="save_class" icon="file-download" @click="saveJsonConfig()" rounded>Save configuratio group</mdb-btn>
+                <!-- <mdb-btn gradient="amy-crisp" class="send_class" icon="paper-plane" @click="sendEmails()" rounded>Send mails</mdb-btn> -->
             </mdb-card-footer>
         </mdb-card>
     </div>
@@ -34,7 +36,7 @@
 
 <script>
 import AutocompleteToken from '@/components/AutocompleteToken.vue'
-  import {
+import {
     mdbRow,
     mdbCol,
     // mdbInput,
@@ -46,22 +48,23 @@ import AutocompleteToken from '@/components/AutocompleteToken.vue'
     mdbCardFooter,
     mdbIcon
     // mdbBadge
-  } from "mdbvue";
+} from "mdbvue";
+const {ipcRenderer} = require('electron')
 
   export default {
     name: "ShowParticipantsCard",
     components: {
         AutocompleteToken,
-      mdbRow,
-      mdbCol,
-    //   mdbInput,
-      mdbBtn,
-      mdbCard,
-      mdbCardBody,
-      mdbCardHeader,
-      mdbCardTitle,
-      mdbCardFooter,
-      mdbIcon
+        mdbRow,
+        mdbCol,
+        //   mdbInput,
+        mdbBtn,
+        mdbCard,
+        mdbCardBody,
+        mdbCardHeader,
+        mdbCardTitle,
+        mdbCardFooter,
+        mdbIcon
     },
     data() {
       return {
@@ -77,14 +80,36 @@ import AutocompleteToken from '@/components/AutocompleteToken.vue'
         this.participants = this.groupObj.participants;
     },
     methods: {
-    customerSelected(customer) {
-      console.log(`Customer Selected:\nid: ${customer.id}\nname: ${customer.name}`);
+        saveJsonConfig() {
+            let groupObjJson = {};
+            groupObjJson.group_name = this.group_name;
+            groupObjJson.participants = [];
+
+            this.participants.forEach(element => {
+                let tmpObj = {};
+                tmpObj.participant_name = element.participant_name;
+                tmpObj.mail = element.mail;
+                tmpObj.not_assigned_participant = element.not_assigned_participant
+                groupObjJson.participants.push(tmpObj);
+            });
+
+            console.log("GroupObjJson : ", groupObjJson);
+
+            ipcRenderer.send('create-json-group', JSON.stringify(groupObjJson));
+        }
+        // sendEmails() {
+        //     // let tmpObj = {}
+        //     // tmpObj.from = "SecretSantaClause@mail.com"
+        //     // tmpObj.to = "sufyan.kerboua@epitech.eu"
+        //     // let mail = 'Secret Santa Clause <sufyan.kerboua2@mail.dcu.ie>';
+        //     // console.log("Mail sender : ", mail);
+        //     ipcRenderer.send('send-mails');
+        //     ipcRenderer.on('send-mails-error', (event) => {
+        //     console.log(event);
+        //     alert("No mail saved in Settings, please update your mail on the Settings Page.");
+        //     })
+        // }
     },
-    onChange(value) {
-        console.log(value)
-      // do something with the current value
-    }
-  },
   };
   
 </script>
@@ -103,7 +128,7 @@ hr {
 
 .body_group_creation {
     overflow-y: auto;
-    max-height: 450px;
+    max-height: 400px;
     padding-top: 0px;
     padding-bottom: 0px;
 }
@@ -119,6 +144,14 @@ hr {
 
 .badge_participant {
     font-size: 20px;
+}
+
+.save_class {
+    color: black;
+}
+
+.send_class {
+    color: black;
 }
 
 </style>

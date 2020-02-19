@@ -3,10 +3,7 @@
 // External Module
 const nodemailer = require("nodemailer");
 const fs = require('fs');
-// var Mailgen = require('mailgen');
-const Email = require('email-templates');
-
-
+const ejs = require('ejs');
 
 // Intern Module
 const ElectronGoogleOAuth2Wrapper = require("./ElectronGoogleOAuth2Wrapper");
@@ -23,6 +20,7 @@ const SCOPES = [
   'https://www.googleapis.com/auth/userinfo.email'
 ];
 const dataJSONUserMail = __dirname + "/../src/data/userMail.json";
+const pathTemplateMail1 = __dirname + "/../template-mails/mail.ejs";
   
 class MailManager {
     constructor() {
@@ -55,25 +53,148 @@ class MailManager {
         return mailSet;
     }
 
-    sendMail(configMail) {
+    // Remove all occurence of a specific value in the potential value array specificValue
+    removeAllPotentialValueOfSpecificValue(sudokuArray, participantToRemove) {
+        // Loop through all participant array (named sudoku) to access the array of potential value
+        for (let y = 0; y < sudokuArray.length; y++) {
+            // If the value is an array & contains the value we want to remove, we access
+            if (Array.isArray(sudokuArray[y][sudokuArray[y].length - 1]) && 
+            (sudokuArray[y][sudokuArray[y].length - 1].includes(participantToRemove))) {
+                // Remove only the specific value of the potential array
+                sudokuArray[y][sudokuArray[y].length - 1] = sudokuArray[y][sudokuArray[y].length - 1].filter(e => e !== participantToRemove);
+            }
+        }
+    }
 
+    // Recursive function
+    // 
+    assignParticipantFromPotentialValues(sudokuArray, participantToAssign) {
+        // Loop all sudoku participant Array
+        for (let y = 0; y < sudokuArray.length; y++) {
+            // If the value is an array & this array contains the value we want to assign to the index, we access
+            if (Array.isArray(sudokuArray[y][sudokuArray[y].length - 1]) && 
+            (sudokuArray[y][sudokuArray[y].length - 1].includes(participantToAssign))) {
+                // potentialValues => is the Array of all the potential participants that can be assigned to the index
+                // Get the potentialValues under the shape of an array
+                let potentialValues = sudokuArray[y][sudokuArray[y].length - 1];
+                // Assign the Participant to the specific index
+                sudokuArray[y][sudokuArray[y].length - 1] = participantToAssign;
+                // Remove the previous Participant how saw assigned (here the value participantToAssign)
+                potentialValues = potentialValues.filter(e => e !== participantToAssign);
+                // Remove the name of this participant from all other Potencial array 
+                this.removeAllPotentialValueOfSpecificValue(sudokuArray, participantToAssign);
+                // Assign the next participant of the potencial values (so recursive beginning)
+                this.assignParticipantFromPotentialValues(sudokuArray, potentialValues[0]);
+            }
+        }
+    }
+
+    // Randomly find all the target participant for each participant
+    // For those assignements, we use the sudoku method to assign a target participant
+    randomlyAssignParticipant(allParticipants, simpletabRefParticipant) {
+
+        // Create array to represent all our participants not assigned throught the shape of an array (inspired of the sudoku method)
+        let sudokuArray = [];
+        // Select only the relevant data from our previous Array<Object>
+        allParticipants.forEach(elem => {
+            sudokuArray.push(elem.not_assigned_participant);
+        });
+        // Assign all potential values
+        for (let y = 0; y < sudokuArray.length; y++) {
+            let arrayPotentialValues = [];
+            // Thanks to an array where all names of participant is stored (simpletabRefParticipant)
+            // We can create an array of potential names for each participant
+            simpletabRefParticipant.forEach(elem => {
+                if (!sudokuArray[y].includes(elem))
+                    arrayPotentialValues.push(elem);
+            });
+            sudokuArray[y].push(arrayPotentialValues);
+        }
+        // SO sudokuArray looks like 
+        // [ [ participant1, participant2, [ potentialParticipant1, potentialParticipant2 ] ] ]
+        // sudokuArray = [[ <string>, [<string>] ]]
+
+        // Transform all PotentialParticipant into concret pparticipant, throuht recursive fct
+        this.assignParticipantFromPotentialValues(sudokuArray, simpletabRefParticipant[0]);
+        // console.log("Final Array : ", sudokuArray);
+
+        // Bind each Participant to his target Participant
+        let bindedParticipants = [];
+        sudokuArray.forEach((elem, index) => {
+            if (Array.isArray(elem[elem.length - 1]))
+                bindedParticipants.push({participant: simpletabRefParticipant[index], assigned_participant: elem[elem.length - 1][0]});
+            else
+                bindedParticipants.push({participant: simpletabRefParticipant[index], assigned_participant: elem[elem.length - 1]});
+        });
+        return bindedParticipants;
+    }
+
+    // Render all HTML body of each participant with his own data
+    renderHTMLMail(configMailGroup) {
+
+        let allParticipants = configMailGroup.groupObj.participants;
+
+        // Fill a basic Object, that reresent the configuration of each HTML Mail for each paticipant
+        // With the data send from the MailPreview
+        let configMailHtml = {
+            group_name: configMailGroup.mailContentBasic.group_name,
+            participant: '',
+            assigned_participant: '',
+            date: configMailGroup.mailContentBasic.date,
+            places: configMailGroup.mailContentBasic.places,
+            time: configMailGroup.mailContentBasic.time
+        }
+        // Get the templated HTML Mail body
+        let htmlMailIncomplete = fs.readFileSync(pathTemplateMail1, 'utf-8');
+
+        // Create a simple array to resume all participants
+        let tabRefParticipant = [];
+        allParticipants.forEach(el => {
+            tabRefParticipant.push(el.participant_name)
+        });
+
+        // Get an Array of binded Participant with his target Participant
+        // bindedParticipants = [{participant: string, assigned_participant: string}]
+        let bindedParticipants = this.randomlyAssignParticipant(allParticipants, tabRefParticipant);
+
+        // Fill all the htmlMailsGroup Array, with an object of :
+        // [ { mailDest: string, assigned_participant: string, htmlMail: string } ]
+        let htmlMailsGroup = [];
+        allParticipants.forEach(participant => {
+
+            // Find the good assigned participant for this index
+            let assigned_participant = bindedParticipants.find(elem => elem.participant == participant.participant_name).assigned_participant;
+            // Configure the configMailHtml object
+            configMailHtml.participant = participant.participant_name;
+            configMailHtml.assigned_participant = assigned_participant;
+            // Render the Html Body of the page
+            let htmlMail = ejs.render(htmlMailIncomplete, configMailHtml, {delimiter: '?'});
+            // Push the new object to the htmlMailsGroup Array
+            htmlMailsGroup.push({mailDest: participant.mail, assigned_participant: assigned_participant, htmlMail: htmlMail});
+        });
+
+        // console.log("========= ALL Mails + html =============== =>\n", htmlMailsGroup);
+        return htmlMailsGroup;
+    }
+
+    sendMail(configMailGroup) {
+
+        // Render All mails for each Participants
+        // [ { mailDest: string, assigned_participant: string, htmlMail: string } ]
+        let allHTMLMailsDest = this.renderHTMLMail(configMailGroup);
+
+        // Get Previous token stored from the Gmail connection
+        // {clientId, clientSecret, refreshToken, accessToken}
         let MailSettings = JSON.parse(fs.readFileSync(MAIL_SETTINGS_PATH,'utf-8'));
+        // Get ths previous mail stored from the user
+        let userMail = JSON.parse(fs.readFileSync(dataJSONUserMail,'utf-8'));
     
-        let mailOptions = {
-            from: configMail.from,
-            to: "sufyan.kerboua@epitech.eu",
-            subject: "Node.js Email with Secure OAuth 2",
-            generateTextFromHTML: true,
-            html: "<b>Hello there YESSSS MON GARS SURE !!!!!</b>"
-        };
-
-        fs.readFileSync
-    
+        // Configure NodeMailerParams Object 
         let nodeMailerParams = {
             service: "gmail",
             auth: {
                 type: "OAuth2",
-                user: "sufyan.kerboua2@mail.dcu.ie",
+                user: userMail.userMail,
                 clientId: MailSettings.clientId,
                 clientSecret: MailSettings.clientSecret,
                 refreshToken: MailSettings.refreshToken,
@@ -81,41 +202,34 @@ class MailManager {
             }
         }
     
-        console.log("NodeMailer Param obj : ", nodeMailerParams);
-        console.log("Mail Option obj :", mailOptions)
-    
+        // Configure the basic options for each mail
+        let mailOptions = {
+            from: 'Secret Santa Clause <' + userMail.userMail + '>',
+            to: '',
+            subject: 'Secret Santa Clause Assignment',
+            generateTextFromHTML: true,
+            html: ''
+        };
+
+        //Loop to send email to everyone
         let smtpTransport = nodemailer.createTransport(nodeMailerParams);
-        smtpTransport.sendMail(mailOptions, (error, response) => {
-            error ? console.log(error) : console.log("Response : ", response);
-            smtpTransport.close();
+        allHTMLMailsDest.forEach(elem => {
+
+            mailOptions.to = elem.mail;
+            mailOptions.html = elem.htmlMail;
+            
+            smtpTransport.sendMail(mailOptions, (error, response) => {
+                error ? console.log(error) : console.log("Response : ", response);
+                smtpTransport.close();
+            });
         });
+
+        console.log("NodeMailer Param obj : ", nodeMailerParams);
+    
     }
 
     createMailTemplate() {
 
-        const email = new Email({
-          message: {
-            from: 'niftylettuce@gmail.com'
-          },
-          // uncomment below to send emails in development/test env:
-          // send: true
-          transport: {
-            jsonTransport: true
-          }
-        });
-        
-        email
-          .send({
-            template: 'mars',
-            message: {
-              to: 'elon@spacex.com'
-            },
-            locals: {
-              name: 'Elon'
-            }
-          })
-          .then(console.log)
-          .catch(console.error);
         return("<h1>Salut from mailManager</h1>")
     }
 }
