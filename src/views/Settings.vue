@@ -23,7 +23,7 @@
 
 <script>
 // @ is an alias to /src
-const {ipcRenderer} = require('electron')
+// const {ipcRenderer} = require('electron')
 
 import {
   mdbRow,
@@ -59,8 +59,6 @@ export default {
   },
   methods: {
     sendAndClosePopup() {
-      console.log("Here");
-      ipcRenderer.send('close-settings-pop-up', this.userMail);
     },
     handleInputMail(val) {
         this.userMail = val;

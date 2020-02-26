@@ -135,7 +135,7 @@ class ElectronGoogleOAuth2Wrapper extends events_1.EventEmitter  {
             return this.oauth2Client
                 .getToken(authorizationCode)
                 .then(async (response) => {
-                    console.log("All response : ", response);
+                    // console.log("All response : ", response);
                     this.oauth2Client.setCredentials(response.tokens);
                     if (response.tokens.refresh_token == undefined) {
                         console.log("Refresh Token Changed");

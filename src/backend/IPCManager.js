@@ -10,7 +10,6 @@ let MailManager = require("./MailManager");
 let SettingsManager = require('./SettingsManager.js');
 
 const dataJSONGroupFolderName = __dirname + "/../src/data/groups/";
-const dataJSONUserMail = __dirname + "/../src/data/userMail.json";
 
 class IPCManager {
     constructor() {
@@ -21,26 +20,23 @@ class IPCManager {
 
     ListenerAll() {
 
-        electron.ipcMain.on('send-mail-viewer', (event) => {
-            event.sender.send('send-mail-viewer-reply', this.myMailManager.createMailTemplate());
+        electron.ipcMain.on('open-settings-pop-up', () => {
+            this.settingsManager.createPopUp();
         })
 
-        electron.ipcMain.on('open-settings-pop-up', (event) => {
-            let jsonUserMail = JSON.parse(fs.readFileSync(dataJSONUserMail));
-            console.log("json User Mail : ", jsonUserMail.userMail);
-            if (jsonUserMail.userMail == undefined)
-                jsonUserMail.userMail = ""; 
-            this.settingsManager.createPopUp(jsonUserMail.userMail);
-            event.sender.send('current-mail', jsonUserMail);
-        })
-
+        // Not used for the moment
         electron.ipcMain.on('close-settings-pop-up', (event, param) => {
             this.settingsManager.closePopUp()
             console.log("param send (askip c est la mail) :", param);
-            fs.writeFileSync(dataJSONUserMail, JSON.stringify({userMail: param}));
         })
 
         electron.ipcMain.on('get-json-group', (event) => {
+            event.sender.send('get-json-group-reply', JSON.stringify(this.JsonGroups));
+        })
+
+        electron.ipcMain.on('get-reloaded-json-group', (event) => {
+            this.getJsonData();
+            console.log("JSON GROUPS : ",this.JsonGroups);
             event.sender.send('get-json-group-reply', JSON.stringify(this.JsonGroups));
         })
     
@@ -54,13 +50,19 @@ class IPCManager {
         })
 
         electron.ipcMain.on('send-mails', async (event, arg) => {
-
+            await this.myMailManager.connectGmailAccount();
             if (this.myMailManager.mailAvailable()) {
-                await this.myMailManager.connectGmailAccount();
                 this.myMailManager.sendMail(JSON.parse(arg));
             } else {
                 event.sender.send('send-mails-error');
             }
+        })
+
+        electron.ipcMain.on('delete-group', (event, param) => {
+            console.log("Group to delete : ", param);
+
+            if (fs.existsSync(dataJSONGroupFolderName + param + '.json'))
+                fs.unlinkSync(dataJSONGroupFolderName + param + '.json');
         })
           
     }

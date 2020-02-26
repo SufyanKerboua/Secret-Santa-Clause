@@ -25,6 +25,8 @@ import GroupBtn from '@/components/GroupBtn.vue'
 import GroupCreatorBtn from '@/components/GroupCreatorBtn.vue'
 const {ipcRenderer} = require('electron')
 
+let vm;
+
 export default {
   name: 'Home',
   components: {
@@ -37,14 +39,27 @@ export default {
       jsonGroups: {}
     }
   },
+  watch: {
+    jsonGroups: function(value) {
+      this.jsonGroups = value;
+    }
+  },
   created: function () {
+    vm = this;
     ipcRenderer.send('get-json-group');
-    ipcRenderer.on('get-json-group-reply', (event, arg) => {
-      this.jsonGroups = JSON.parse(arg)
-      console.log("Json groups : ", this.jsonGroups)
-    })
+  },
+  methods: {
+    reloadGroups() {
+      ipcRenderer.send('get-reloaded-json-group');
+    }
   }
 }
+
+ipcRenderer.on('get-json-group-reply', (event, param) => {
+  vm.jsonGroups = JSON.parse(param)
+  console.log("Json groups : ", vm.jsonGroups)
+})
+
 </script>
 
 <style scoped>

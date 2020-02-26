@@ -28,7 +28,6 @@
 
             <mdb-card-footer class="white d-flex justify-content-end">
                 <mdb-btn gradient="amy-crisp" class="save_class" icon="file-download" @click="saveJsonConfig()" rounded>Save configuratio group</mdb-btn>
-                <!-- <mdb-btn gradient="amy-crisp" class="send_class" icon="paper-plane" @click="sendEmails()" rounded>Send mails</mdb-btn> -->
             </mdb-card-footer>
         </mdb-card>
     </div>
@@ -39,7 +38,6 @@ import AutocompleteToken from '@/components/AutocompleteToken.vue'
 import {
     mdbRow,
     mdbCol,
-    // mdbInput,
     mdbBtn,
     mdbCard,
     mdbCardBody,
@@ -47,7 +45,6 @@ import {
     mdbCardTitle,
     mdbCardFooter,
     mdbIcon
-    // mdbBadge
 } from "mdbvue";
 const {ipcRenderer} = require('electron')
 
@@ -97,18 +94,6 @@ const {ipcRenderer} = require('electron')
 
             ipcRenderer.send('create-json-group', JSON.stringify(groupObjJson));
         }
-        // sendEmails() {
-        //     // let tmpObj = {}
-        //     // tmpObj.from = "SecretSantaClause@mail.com"
-        //     // tmpObj.to = "sufyan.kerboua@epitech.eu"
-        //     // let mail = 'Secret Santa Clause <sufyan.kerboua2@mail.dcu.ie>';
-        //     // console.log("Mail sender : ", mail);
-        //     ipcRenderer.send('send-mails');
-        //     ipcRenderer.on('send-mails-error', (event) => {
-        //     console.log(event);
-        //     alert("No mail saved in Settings, please update your mail on the Settings Page.");
-        //     })
-        // }
     },
   };
   

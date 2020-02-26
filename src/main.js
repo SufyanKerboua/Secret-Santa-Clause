@@ -19,6 +19,19 @@ Vue.use(IconsPlugin)
 
 Vue.config.productionTip = true
 
+Vue.directive('add-class-hover', {
+  bind(el, binding) {    
+    const { value="" } = binding;
+    el.addEventListener('mouseenter',()=> {
+        el.classList.add(value)
+    });
+    el.addEventListener('mouseleave',()=> {
+        el.classList.remove(value)
+    });
+  }
+})
+
+
 new Vue({
   router,
   store,

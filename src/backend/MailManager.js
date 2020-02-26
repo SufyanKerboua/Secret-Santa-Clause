@@ -4,6 +4,7 @@
 const nodemailer = require("nodemailer");
 const fs = require('fs');
 const ejs = require('ejs');
+const request = require('request');
 
 // Intern Module
 const ElectronGoogleOAuth2Wrapper = require("./ElectronGoogleOAuth2Wrapper");
@@ -13,13 +14,10 @@ const CLIENT_SSC_PATH = 'googleAPI/client_ssc.json';
 const TOKEN_PATH = 'googleAPI/token.json';
 const MAIL_SETTINGS_PATH = 'googleAPI/mail_settings.json';
 const SCOPES = [
-  'https://mail.google.com/',
-  'https://www.googleapis.com/auth/gmail.modify',
-  'https://www.googleapis.com/auth/gmail.compose',
-  'https://www.googleapis.com/auth/gmail.send',
-  'https://www.googleapis.com/auth/userinfo.email'
+  'https://mail.google.com/'
 ];
-const dataJSONUserMail = __dirname + "/../src/data/userMail.json";
+const API_KEYS = 'AIzaSyDtNX0pft0tStJcEq4QTKpUS3pRQj1SQ4w';
+const URL_EMAIL_PROFILE = 'https://www.googleapis.com/gmail/v1/users/me/profile?key=';
 const pathTemplateMail1 = __dirname + "/../template-mails/mail.ejs";
   
 class MailManager {
@@ -27,22 +25,27 @@ class MailManager {
         this.AppSettings = JSON.parse(fs.readFileSync(CLIENT_SSC_PATH,'utf-8'));
         this.SavedLastGmailConnection = JSON.parse(fs.readFileSync(TOKEN_PATH, 'utf-8'));
         this.myApiOauth = new ElectronGoogleOAuth2Wrapper(this.AppSettings.client_id, this.AppSettings.client_secret, SCOPES);
-        this.getStoredUser();
-    }
-
-    getStoredUser() {
-        let jsonUserMail = JSON.parse(fs.readFileSync(dataJSONUserMail));
-        console.log("json User Mail : ", jsonUserMail.userMail);
-        if (jsonUserMail.userMail == undefined)
-            jsonUserMail.userMail = ""; 
-        this.mailUser = jsonUserMail.userMail;
+        this.emailUser = '';
     }
 
     mailAvailable() {
-        this.getStoredUser();
-        if (this.mailUser != undefined && this.mailUser != "")
+        if (this.emailUser != undefined && this.emailUser != '')
             return true;
         return false;
+    }
+
+    doRequestEmailUserToGmail(accessToken) {
+        return new Promise(function (resolve, reject) {
+            request(URL_EMAIL_PROFILE + API_KEYS, { headers : { "Authorization" : 'Bearer ' + accessToken, "Accept": 'application/json'}}, (err, res, body) => {
+                if (err) { 
+                    console.log('Error ==>>', err);
+                    reject('');
+                }
+                let emailUserFromGmail = JSON.parse(body).emailAddress;
+                console.log("Email from : ", emailUserFromGmail);
+                resolve(emailUserFromGmail);
+            });
+        })
     }
 
     async connectGmailAccount() {
@@ -50,6 +53,8 @@ class MailManager {
         if (mailSet.refreshToken != this.SavedLastGmailConnection.refresh_token)
             fs.writeFileSync(TOKEN_PATH, JSON.stringify({refresh_token: mailSet.refreshToken, access_token: mailSet.accessToken}));
         fs.writeFileSync(MAIL_SETTINGS_PATH, JSON.stringify(mailSet));
+
+        this.emailUser = await this.doRequestEmailUserToGmail(mailSet.accessToken);
         return mailSet;
     }
 
@@ -67,7 +72,6 @@ class MailManager {
     }
 
     // Recursive function
-    // 
     assignParticipantFromPotentialValues(sudokuArray, participantToAssign) {
         // Loop all sudoku participant Array
         for (let y = 0; y < sudokuArray.length; y++) {
@@ -187,14 +191,15 @@ class MailManager {
         // {clientId, clientSecret, refreshToken, accessToken}
         let MailSettings = JSON.parse(fs.readFileSync(MAIL_SETTINGS_PATH,'utf-8'));
         // Get ths previous mail stored from the user
-        let userMail = JSON.parse(fs.readFileSync(dataJSONUserMail,'utf-8'));
+        // let userMail = JSON.parse(fs.readFileSync(dataJSONUserMail,'utf-8'));
+        let userMail = this.emailUser;
     
         // Configure NodeMailerParams Object 
         let nodeMailerParams = {
             service: "gmail",
             auth: {
                 type: "OAuth2",
-                user: userMail.userMail,
+                user: userMail,
                 clientId: MailSettings.clientId,
                 clientSecret: MailSettings.clientSecret,
                 refreshToken: MailSettings.refreshToken,
@@ -211,11 +216,13 @@ class MailManager {
             html: ''
         };
 
+        // console.log("All Mails : ", allHTMLMailsDest);
+
         //Loop to send email to everyone
         let smtpTransport = nodemailer.createTransport(nodeMailerParams);
         allHTMLMailsDest.forEach(elem => {
 
-            mailOptions.to = elem.mail;
+            mailOptions.to = elem.mailDest;
             mailOptions.html = elem.htmlMail;
             
             smtpTransport.sendMail(mailOptions, (error, response) => {
@@ -224,14 +231,13 @@ class MailManager {
             });
         });
 
-        console.log("NodeMailer Param obj : ", nodeMailerParams);
+        // console.log("NodeMailer Param obj : ", nodeMailerParams);
     
     }
 
-    createMailTemplate() {
-
-        return("<h1>Salut from mailManager</h1>")
-    }
+    // createMailTemplate() {
+    //     return("<h1>Salut from mailManager</h1>")
+    // }
 }
 
 module.exports = MailManager;

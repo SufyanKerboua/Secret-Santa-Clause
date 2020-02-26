@@ -1,6 +1,6 @@
 <template>
   <div class="group_creator">
-    <h1> <b> Group creator</b></h1>
+    <h1> Create your Group</h1>
     <FormGroupCard/>
   </div>
 </template>

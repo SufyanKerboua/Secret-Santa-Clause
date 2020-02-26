@@ -13,10 +13,6 @@ class SettingsManager {
         this.win = new electron.BrowserWindow({ width: 375, height: 667, resizable: false, "use-content-size": true, show: false, webPreferences: {
             nodeIntegration: true
           } });
-        // win2.loadURL(urlParam, { userAgent: 'Chrome' });
-        console.log("path : ", __dirname);
-        console.log("path : ", {__dirname});
-        // this.win.loadURL("file://${__dirname}/../src/backend/indexSettings.html");
 
         if (process.env.WEBPACK_DEV_SERVER_URL) {
 

@@ -6,13 +6,14 @@
 </template>
 
 <script>
-const {ipcRenderer} = require('electron')
+// const {ipcRenderer} = require('electron')
 
 export default {
   name: 'SettingsBtn',
   methods: {
     openPopup() {
-      ipcRenderer.send('open-settings-pop-up');
+      alert("No 'Settings' Page available for the moment.");
+      // ipcRenderer.send('open-settings-pop-up');
     }
   }
 }

@@ -4,7 +4,7 @@
             <mdb-card-header class="pt-4 amy-crisp-gradient">
                 <mdb-card-title>
                     <mdb-icon class="" icon="mail-bulk" size="2x" />
-                    <strong> Mail Preview for {{ this.group_name }} group </strong>
+                    <strong> Mail Preview </strong>
                     </mdb-card-title>
             </mdb-card-header>
 
@@ -32,7 +32,9 @@
             </mdb-card-body>
 
             <mdb-card-footer class="white d-flex justify-content-end">
-                <mdb-btn gradient="amy-crisp" icon="paper-plane" @click="sendEmail" rounded>Send Mails</mdb-btn>
+              <router-link :to="{ name: 'Home'}">
+                <mdb-btn class="mail_content" gradient="amy-crisp" icon="paper-plane" @click="sendEmail" rounded>Send Mails</mdb-btn>
+              </router-link>
             </mdb-card-footer>
         </mdb-card>
     </div>
@@ -71,7 +73,6 @@
       return {
           group_name: "",
           participants: [],
-          body: '',
           date: '',
           time: '',
           places: ''
@@ -83,12 +84,6 @@
     mounted() {
         this.group_name = this.groupObj.group_name;
         this.participants = this.groupObj.participants;
-        ipcRenderer.send('send-mail-viewer');
-        ipcRenderer.on('send-mail-viewer-reply', (event, arg) => {
-          this.body = arg;
-          console.log(event);
-          // alert("No mail saved in Settings, please update your mail on the Settings Page.");
-        })
     },
     methods: {
       sendEmail() {
@@ -101,16 +96,16 @@
           },
           groupObj: this.groupObj
         }
-        // let mail = 'Secret Santa Clause <sufyan.kerboua2@mail.dcu.ie>';
         console.log("Mail sender : ", tmpObj);
         ipcRenderer.send('send-mails', JSON.stringify(tmpObj));
-        ipcRenderer.on('send-mails-error', (event) => {
-          console.log(event);
-          alert("No mail saved in Settings, please update your mail on the Settings Page.");
-        })
       }
     }
   };
+
+  ipcRenderer.on('send-mails-error', (event) => {
+    console.log(event);
+    alert("An error has occured, we couldn't retrieve your e-mail address.");
+  })
   
 </script>
 
@@ -118,16 +113,15 @@
 <style scoped>
 
 .show_mail_preview_card {
-    text-align: initial;
-    margin: 50px;
+  text-align: initial;
+  margin: 50px;
 }
 
 .body_group_creation {
-    overflow-y: auto;
-    /* height: 350px; */
-    max-height: 400px;
-    padding-top: 0px;
-    padding-bottom: 0px;
+  overflow-y: auto;
+  max-height: 400px;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
 .mail_content {

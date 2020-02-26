@@ -4,7 +4,6 @@
     <mdb-container fluid>
 
       <mdbRow>
-          <!-- <mdbCol col=2></mdbCol> -->
           <mdbCol col=6>
             <ShowParticipantsCard :groupObj="this.groupObj"/>
           </mdbCol>
@@ -12,12 +11,6 @@
             <ShowMailPreviewCard :groupObj="this.groupObj"/>
           </mdbCol>
       </mdbRow>
-      <!-- <mdbRow>
-          <mdbCol col=3></mdbCol>
-          <mdbCol col=6>
-          </mdbCol>
-          <mdbCol col=3></mdbCol>
-      </mdbRow> -->
     </mdb-container>
 
 

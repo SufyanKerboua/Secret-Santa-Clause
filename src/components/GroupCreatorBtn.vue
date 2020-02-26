@@ -1,18 +1,19 @@
 <template>
   <div class="group_creator_btn">
     <router-link :to="{ name: 'GroupCreator'}">
-      <mdb-icon class="text-success btn_plus" icon="plus-circle" size="5x"/>
+      <img class="img_group text-success" src="../assets/add_group_icon.png" alt="" srcset="">
+      <!-- <mdb-icon class="text-success btn_plus" icon="plus-circle" size="5x"/> -->
     </router-link>
   </div>
 </template>
 
 <script>
-import {mdbIcon} from "mdbvue";
+// import {mdbIcon} from "mdbvue";
 
 export default {
   name: 'GroupCreatorBtn',
   components: {
-    mdbIcon
+    // mdbIcon
     },
   props: {
   }
@@ -26,10 +27,10 @@ export default {
   margin: auto;
   margin-top: 25px;
   margin-bottom: 25px;
-  height: 150px;
-  width: 150px;
-  background-color: green;
-  border: solid red;
+  height: 170px;
+  width: 170px;
+  /* background-color: green; */
+  border: 2px solid #500000;
   border-radius: 30px;
 }
 

@@ -1,9 +1,5 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div> -->
     <LogoHomeBtn/>
     <router-view/>
   </div>
@@ -12,7 +8,6 @@
 <script>
 // @ is an alias to /src
 import LogoHomeBtn from '@/components/LogoHomeBtn.vue'
-
 
 export default {
   name: 'App',
@@ -26,6 +21,14 @@ export default {
 </script>
 
 <style>
+
+h1 {
+  text-shadow: 2px 2px #ff0000;
+}
+
+h3 {
+  text-shadow: 2px 2px #ff0000;
+}
 
 body {
   margin: 0;
